@@ -1,31 +1,32 @@
-const mqtt = require('mqtt')
-const client  = mqtt.connect('mqtt://devfest.whitesmith.co/mosquitto')
+const mqtt = require('mqtt');
+const fs = require('fs');
+
+const config = JSON.parse(fs.readFileSync('./config.json'));
+const client  = mqtt.connect(config.url);
  
 client.on('connect', () => {
-  client.subscribe('#', (err) => {
-    if (!err) {
-      // client.publish('presence', 'Hello mqtt')
-    }
-  })
-})
+  client.subscribe('#', (err) => {});
+});
  
 client.on('message', (topic, message) => {
-  // message is Buffer
   const parsedMsg = JSON.parse(message);
-  if (topic == "question" && parsedMsg.message_type === 'round_start') {
-    console.log(topic);
+
+  if (topic === 'question' && parsedMsg.message_type === 'round_end') {
+    console.log(message.toString());
+  }
+  if (topic === 'question' && parsedMsg.message_type === 'round_start') {
     console.log(message.toString());
     const sendObj = {
-      message_type: "round_answer",
+      message_type: 'round_answer',
       question_id: parsedMsg.question_id,
-      user_id: 48,
-      user_token: "6f4844bb3545466ac13f026b54de68a5607eca9f",
+      user_id: config.user_id,
+      user_token: config.user_token,
       answer: 0
     };
     
-    //publish 4x
-    for (let i = 0; i < 5; i++) {
-      for (let j = 0; j < 4; j++) {
+    //publish 3x
+    for (let i = 0; i < config.num_requests; i++) {
+      for (let j = 0; j < config.num_answers; j++) {
         sendObj.answer = j;
         client.publish('answer', JSON.stringify(sendObj));
       }

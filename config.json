@@ -1,0 +1,7 @@
+{
+  "url": "mqtt://devfest.whitesmith.co/mosquitto",
+  "user_id": 48,
+  "user_token": "cecede9a68bbef9ae2b44e50a6fa4ced03c47a2c",
+  "num_requests": 4,
+  "num_answers": 4
+}
